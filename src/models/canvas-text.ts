@@ -36,13 +36,20 @@ export interface ICanvasTextProps extends ICanvasMember {
    */
   fontFamily?: string;
   /**
-   * 字体粗细
    * 默认: normal
    */
   fontWeight?: string;
+  /**
+   * 字体旋转角度
+   */
+  rotateDeg?: number;
+  /**
+   * 文字基线
+   */
+  textBaseline?: string;
 }
 
-export default class CanvasText implements ICanvas {
+export default class CanvasText implements ICanvas{
 
   private static defaultProps = {
     x: 0,
@@ -51,7 +58,9 @@ export default class CanvasText implements ICanvas {
     textAlign: 'left',
     fontSize: '14px',
     fontFamily: 'Microsoft Yahei',
-    fontWeight: 'normal'
+    fontWeight: 'normal',
+    rotateDeg: 0,
+    textBaseline: 'top'
   } as ICanvasTextProps;
 
   public text: string;
@@ -63,6 +72,8 @@ export default class CanvasText implements ICanvas {
   public fontFamily: string;
   public textAlign: ICanvasTextProps['textAlign'];
   public onDraw: ICanvasMember['onDraw'];
+  public rotateDeg: number;
+  public textBaseline: string;
 
   public constructor(props: ICanvasTextProps) {
     Object.assign(this, {...CanvasText.defaultProps}, props);
@@ -72,11 +83,39 @@ export default class CanvasText implements ICanvas {
     if (this.onDraw) {
       this.onDraw(canvasContext, this);
     } else {
-      canvasContext.fillStyle = this.color;
-      canvasContext.font = `${this.fontWeight} ${this.fontSize} ${this.fontFamily}`;
-      canvasContext.textAlign = this.textAlign as string;
-      canvasContext.fillText(this.text, this.x, this.y);
+      if (this.rotateDeg) {
+        this.drawRotateText(canvasContext);
+      } else {
+        this.drawText(canvasContext);
+      }
     }
+  }
+
+  /**'
+   * 绘制旋转一定角度的文字
+   * @param canvasContext
+   */
+  private drawRotateText(canvasContext: CanvasRenderingContext2D): void {
+    canvasContext.save();
+    canvasContext.translate(this.x, this.y);
+    canvasContext.rotate(-this.rotateDeg * Math.PI / 180);
+    canvasContext.fillStyle = this.color;
+    canvasContext.font = `${this.fontWeight} ${this.fontSize} ${this.fontFamily}`;
+    canvasContext.textAlign = this.textAlign as string;
+    canvasContext.textBaseline  = this.textBaseline as string;
+    canvasContext.fillText(this.text, 0, 0);
+    canvasContext.restore();
+  }
+
+  /**'
+   * 绘制文字
+   * @param canvasContext
+   */
+  private drawText(canvasContext: CanvasRenderingContext2D): void {
+    canvasContext.fillStyle = this.color;
+    canvasContext.font = `${this.fontWeight} ${this.fontSize} ${this.fontFamily}`;
+    canvasContext.textAlign = this.textAlign as string;
+    canvasContext.fillText(this.text, this.x, this.y);
   }
 
   public prepare(): Promise<ICanvas> {

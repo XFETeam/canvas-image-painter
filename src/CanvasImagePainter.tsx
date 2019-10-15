@@ -5,11 +5,13 @@ import CanvasText from './models/canvas-text';
 import {ICanvas} from './models/i-canvas';
 import './styles.css';
 import CanvasQr from './models/canvas-qr';
+import CanvasSplicingText from './models/canvas-splicing-text';
 
 export const enum MemberEnum {
   Img = 'img',
   Text = 'text',
-  Qr = 'qr'
+  Qr = 'qr',
+  SplicingText = 'SplicingText'
 }
 
 export const enum CanvasImagePainterType {
@@ -17,10 +19,10 @@ export const enum CanvasImagePainterType {
   Image = 'image'
 }
 
-export type IMemberType = CanvasImg | CanvasText | CanvasQr;
+export type IMemberType = CanvasImg | CanvasText | CanvasQr | CanvasSplicingText;
 
 export type IMember = {
-  type: MemberEnum.Img | MemberEnum.Text | MemberEnum.Qr;
+  type: MemberEnum.Img | MemberEnum.Text | MemberEnum.Qr | MemberEnum.SplicingText;
 } & IMemberType;
 
 export const enum ToDataURLTypeEnum {
@@ -139,6 +141,10 @@ export default class CanvasImagePainter extends React.PureComponent<IProps, ISta
           instance = new CanvasQr(member as CanvasQr);
           break;
         }
+        case MemberEnum.SplicingText: {
+          instance = new CanvasSplicingText(member as CanvasSplicingText);
+          break;
+        }
         default:
           throw new Error(`invalid member type = ${member.type}`);
       }
@@ -182,6 +188,7 @@ export default class CanvasImagePainter extends React.PureComponent<IProps, ISta
   private draw(props = this.props) {
     const canvas = this.$root.current as HTMLCanvasElement;
     const {members, toDataURLType} = props;
+
     const shouldConvertToBase64 = this.isImageType();
     return CanvasImagePainter.draw(canvas, members, shouldConvertToBase64, toDataURLType);
   }
@@ -217,7 +224,7 @@ export default class CanvasImagePainter extends React.PureComponent<IProps, ISta
     const {src} = this.state;
     if (this.isImageType()) {
       return (
-        <span>
+        <span key={JSON.stringify(this.props.members) || ''}>
           {src && <img className={finalClassName} src={src} alt={alt} />}
           <canvas ref={this.$root} className={finalClassName} width={width} height={height} style={{display: 'none'}} />
         </span>

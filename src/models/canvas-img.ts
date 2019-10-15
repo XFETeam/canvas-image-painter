@@ -26,6 +26,11 @@ export interface ICanvasImgProps extends ICanvasMember {
    * 默认: 图片 onload 后的高度
    */
   height?: number;
+  /**
+   * 图片的旋转角度
+   * 默认： 0
+   */
+  rotateDeg?: number;
 }
 
 export default class CanvasImg implements ICanvas {
@@ -42,6 +47,7 @@ export default class CanvasImg implements ICanvas {
   public height: number;
   public onDraw: ICanvasMember['onDraw'];
   public imageEl: HTMLImageElement;
+  public rotateDeg: number;
 
   public constructor(props: ICanvasImgProps) {
     Object.assign(this, {...CanvasImg.defaultProps}, props);
@@ -54,8 +60,8 @@ export default class CanvasImg implements ICanvas {
       img.onload = (e: Event) => {
         const image = e.target as any;
         this.imageEl = image;
-        this.width = image.naturalWidth;
-        this.height = image.naturalHeight;
+        this.width = this.width || image.naturalWidth;
+        this.height = this.height || image.naturalHeight;
         resolve();
       };
       img.onerror = reject;
@@ -67,8 +73,24 @@ export default class CanvasImg implements ICanvas {
     if (this.onDraw) {
       this.onDraw(canvasContext, this);
     } else {
-      canvasContext.drawImage(this.imageEl, this.x, this.y, this.width, this.height);
+      if (this.rotateDeg) {
+        this.drawRotateImage(canvasContext)
+      } else {
+        this.drawImage(canvasContext);
+      }
     }
+  }
+
+  private drawRotateImage(canvasContext: CanvasRenderingContext2D): void {
+    canvasContext.save();
+    canvasContext.translate(this.x, this.y);
+    canvasContext.rotate(-this.rotateDeg * Math.PI / 180);
+    canvasContext.drawImage(this.imageEl, 0, 0, this.width, this.height);
+    canvasContext.restore();
+  }
+
+  private drawImage(canvasContext: CanvasRenderingContext2D) {
+    canvasContext.drawImage(this.imageEl, this.x, this.y, this.width, this.height);
   }
 
   public prepare(): Promise<ICanvas> {
