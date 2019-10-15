@@ -1,6 +1,6 @@
 {
   "name": "@xfe-team/canvas-image-painter",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "通过 canvas 合并图片, 文字, 二维码等, 并最终生成一张可分享的独立图片",
   "author": "sheailun, huangzhe",
   "license": "MIT",
@@ -14,8 +14,8 @@
     "build": "rollup -c",
     "start": "rollup -c -w",
     "pack": "npm pack",
-    "release": "npm run build && git add dist/ && release-it 0.1.0",
-    "release-only": "release-it 0.1.0"
+    "release": "npm run build && git add dist/ && release-it 0.1.1",
+    "release-only": "release-it 0.1.1"
   },
   "git": "https://github.com/XFETeam/canvas-image-painter.git",
   "homepage": "https://github.com/XFETeam/canvas-image-painter.git",
