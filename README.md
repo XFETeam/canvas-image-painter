@@ -1,4 +1,4 @@
-# @xfe/canvas-image-painter
+# @xfe-team/canvas-image-painter
 
 > 通过 canvas 合并图片, 文字, 二维码等, 并最终生成一张可分享的独立图片
 
@@ -10,7 +10,7 @@
 ## 安装
 
 ```bash
-npm install --save @xfe/canvas-image-painter
+npm install --save @xfe-team/canvas-image-painter
 ```
 
 ## 使用
@@ -20,7 +20,7 @@ npm install --save @xfe/canvas-image-painter
 ```tsx
 import * as React from 'react'
 
-import CanvasImagePainter from '@xfe/canvas-image-painter'
+import CanvasImagePainter from '@xfe-team/canvas-image-painter'
 
 class Example extends React.Component {
   render () {
@@ -98,7 +98,7 @@ class Example extends React.Component {
 在非 React 场景下使用:
 
 ```ts
-import CanvasImagePainter from '@xfe/canvas-image-painter'
+import CanvasImagePainter from '@xfe-team/canvas-image-painter'
 
 const canvas = document.getElementById('#canvas');
 CanvasImagePainter.draw(canvas, [
