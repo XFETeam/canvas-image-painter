@@ -60,7 +60,6 @@ class Example extends React.Component {
             y: 950,
             size: 140,
             textBaseline: 'top', /* 默认top */
-            rotateDeg: 20, /* 旋转角度 */
             padding: 30
           }，
           {
