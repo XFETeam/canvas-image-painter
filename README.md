@@ -196,26 +196,97 @@ CanvasImagePainter.draw(canvas, [
 主要用于类似 css 在 750 宽度中使用绝对定位以及相对750宽高大小放置 `我的名字` 相关信息,
 通过这种形式, 我们可以在画布中绘制 `背景图`, 并在该背景图中分别支持绘制 `Text文本`, `Qr 二维码`, `图片` 等.
 
+## CanvasImagePainter Typescript API Interface
+```ts
+export const enum MemberEnum {
+  Img = 'img',
+  Text = 'text',
+  Qr = 'qr',
+  SplicingText = 'SplicingText'
+}
+
+export const enum CanvasImagePainterType {
+  Canvas = 'canvas',
+  Image = 'image'
+}
+
+export type IMemberType = CanvasImg | CanvasText | CanvasQr | CanvasSplicingText;
+
+export type IMember = {
+  type: MemberEnum.Img | MemberEnum.Text | MemberEnum.Qr | MemberEnum.SplicingText;
+} & IMemberType;
+
+export const enum ToDataURLTypeEnum {
+  Jpeg = 'image/jpeg',
+  Png = 'image/png',
+  Webp = 'image/webp',
+  Gif = 'image/gif'
+}
+
+export type IProps = {
+  /**
+   * 画布(canvas)/图片(canvas) 宽度
+   */
+  width: number;
+  /**
+   * 画布(canvas)/图片(canvas) 高度
+   */
+  height: number;
+  /**
+   * 画布成员,
+   * 类型: IMember[]
+   */
+  members: IMember[];
+  /**
+   * canvas 将要绘制回调
+   */
+  canvasWillDraw?: () => void;
+  /**
+   * canvas 成功绘制回调
+   * 成功回调时, 会携带一个包含 cost 的对象
+   * cost: 生成所花费时长, 单位: ms
+   */
+  canvasDidDrawSuccess?: ({cost}: { cost: number }) => void;
+  /**
+   * canvas 异常绘制回调
+   */
+  canvasDidDrawError?: () => void;
+  /**
+   * 最终生成类型,
+   * 类型: CanvasImagePainterType
+   * 默认: CanvasImagePainterType.Image, 即图片
+   */
+  type?: CanvasImagePainterType;
+  /**
+   * 图片 alt 说明, 仅在 type === CanvasImagePainterType.Image, 即图片时生效
+   */
+  alt?: string;
+  /**
+   * className, 可用于修改画布(canvas)/图片(canvas)的css样式
+   */
+  className?: string;
+  /**
+   * 转换成图片 base64 时的类型, 如 jpg, png 等, 仅在 type === CanvasImagePainterType.Image, 即图片时生效
+   * 推荐使用 image/jpeg, 根据业务总结针对大多数情况下使用 jpeg, 这样生成的 base64 远小于使用 png 生成
+   * @///<reference path="https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toDataURL"/>
+   * 默认: ToDataURLTypeEnum.Jpeg
+   */
+  toDataURLType?: ToDataURLTypeEnum | string;
+}
+
+export type IState = {
+  src: string;
+}
+```
+
 ## members 属性
 
 在 React 中 members 作为以数组作为 `CanvasImagePainter` 的 props 属性传入使用,
 在非 React 使用中, 则作为 draw 函数 `CanvasImagePainter.draw(<HtmlCanvasElement>, <IMember[]>)` 的第二个参数存在.
 基本用法可以参照上述 demo, 更详细用法请参照 [API Interface](##API Interface)
 
-## Typescript API Interface
+#### 图片元素
 ```ts
-export const enum MemberEnum {
-  Img = 'img',
-  Text = 'text',
-  Qr = 'qr'
-}
-
-export type IMemberType = CanvasImg | CanvasText | CanvasQr;
-
-export type IMember = {
-  type: MemberEnum.Img | MemberEnum.Text | MemberEnum.Qr;
-} & IMemberType;
-
 export interface ICanvasImgProps extends ICanvasMember {
   /**
    * 图片地址
@@ -241,49 +312,17 @@ export interface ICanvasImgProps extends ICanvasMember {
    * 默认: 图片 onload 后的高度
    */
   height?: number;
+  /**
+   * 图片的旋转角度
+   * 默认： 0
+   */
+  rotateDeg?: number;
 }
+```
 
-export interface ICanvasTextProps extends ICanvasMember {
-  /**
-   * 文字内容
-   */
-  text: string;
-  /**
-   * 在 canvas 中 x 轴位置
-   * 默认: 0
-   */
-  x?: number;
-  /**
-   * 在 canvas 中 y 轴位置
-   * 默认: 0
-   */
-  y?: number;
-  /**
-   * 字体颜色
-   * 默认: #000
-   */
-  color?: string;
-  /**
-   * 字体对齐
-   * 默认: left
-   */
-  textAlign?: 'left' | 'right' | 'center' | 'start' | 'end';
-  /**
-   * 字体大小
-   * 默认: 14px
-   */
-  fontSize?: string;
-  /**
-   * 字体 family
-   */
-  fontFamily?: string;
-  /**
-   * 字体粗细
-   * 默认: normal
-   */
-  fontWeight?: string;
-}
+#### 二维码元素
 
+```ts
 export const enum CorrectLevelEnum {
   M = 'M',
   L = 'L',
@@ -321,7 +360,6 @@ export interface ICanvasQrProps extends ICanvasMember {
    * 前景色, 二维码绘制颜色部分
    * 默认: "black"
    */
-   * @deprecated
   foreground?: string;
   /**
    * 容错率
@@ -331,19 +369,84 @@ export interface ICanvasQrProps extends ICanvasMember {
   /**
    * 内边距
    * 默认: 0
+   * @deprecated
    */
   padding: number;
 }
+```
 
-export interface ICanvasMember {
+#### 拼接文本元素
+
+```ts
+export interface ICanvasSplicingTextProps extends ICanvasMember {
   /**
-   * 在各自 canvas member 绘制时回调, 用于自定义绘制, 当生效时, 默认绘制行为失效
-   * @param canvasContext
-   * @param instance
+   * 拼接字符串的数组
+   * 默认：空数组
    */
-  onDraw?: <T>(canvasContext: CanvasRenderingContext2D, instance: T) => void;
+  textArray: Array<ICanvasTextProps>
+  /**
+   * 拼接后的字符串x坐标
+   */
+  x?: number;
+  /**
+   * 拼接后的字符串y坐标
+   */
+  y?: number;
 }
 ```
+
+#### 文本元素
+
+```ts
+export interface ICanvasTextProps extends ICanvasMember {
+  /**
+   * 文字内容
+   */
+  text: string;
+  /**
+   * 在 canvas 中 x 轴位置
+   * 默认: 0
+   */
+  x?: number;
+  /**
+   * 在 canvas 中 y 轴位置
+   * 默认: 0
+   */
+  y?: number;
+  /**
+   * 字体颜色
+   * 默认: #000
+   */
+  color?: string;
+  /**
+   * 字体对齐
+   * 默认: left
+   */
+  textAlign?: 'left' | 'right' | 'center' | 'start' | 'end';
+  /**
+   * 字体大小
+   * 默认: 14px
+   */
+  fontSize?: string;
+  /**
+   * 字体 family
+   */
+  fontFamily?: string;
+  /**
+   * 默认: normal
+   */
+  fontWeight?: string;
+  /**
+   * 字体旋转角度
+   */
+  rotateDeg?: number;
+  /**
+   * 文字基线
+   */
+  textBaseline?: string;
+}
+```
+
 #### ChangeLog
 ## 0.1.0 (2019-10-15)
 * fix: 修复入口文件缺失问题
