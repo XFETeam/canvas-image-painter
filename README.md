@@ -46,6 +46,18 @@ class Example extends React.Component {
           },
           {
             type: 'img',
+            src: ‘http://thirdwx.qlogo.cn/mmopen/vi_32/fyKc7ddeDxEDkFmWEQlTcDlcIWfS8P20TDry8aX9axMfpznsISLPvxBcG1bUznRbcqPsOGhzLPzO3zHP5PcrVQ/132’,
+            x: 521,
+            y: 319,
+            width: 142,
+            height: 142,
+            circleRadius: 71,
+            onImgError: function() {
+              console.log('无法获取微信头像');
+            }
+          },
+          {
+            type: 'img',
             src: require('./images/home-share.jpg'),
             x: 200,
             y: 1000,
@@ -317,6 +329,11 @@ export interface ICanvasImgProps extends ICanvasMember {
    * 默认： 0
    */
   rotateDeg?: number;
+  /**
+   * 圆形的图片半径
+   * 默认： 0
+   */
+   circleRadius?: number
 }
 ```
 
@@ -448,6 +465,10 @@ export interface ICanvasTextProps extends ICanvasMember {
 ```
 
 #### ChangeLog
+## 0.1.1 (2019-10-15)
+* add: 加入圆形图片绘制
+* add: 加入绘制图片错误回调
+
 ## 0.1.0 (2019-10-15)
 * fix: 修复入口文件缺失问题
 * fix: 修复无法设置图片大小问题

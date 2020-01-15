@@ -60,7 +60,7 @@
                     _this.height = _this.height || image.naturalHeight;
                     resolve();
                 };
-                img.onerror = reject;
+                img.onerror = _this.onDrawImageError.bind(_this, resolve, reject);
                 img.src = _this.src;
             });
         };
@@ -71,6 +71,9 @@
             else {
                 if (this.rotateDeg) {
                     this.drawRotateImage(canvasContext);
+                }
+                else if (this.circleRadius) {
+                    this.drawCircleImage(canvasContext);
                 }
                 else {
                     this.drawImage(canvasContext);
@@ -84,12 +87,30 @@
             canvasContext.drawImage(this.imageEl, 0, 0, this.width, this.height);
             canvasContext.restore();
         };
+        CanvasImg.prototype.drawCircleImage = function (canvasContext) {
+            canvasContext.save();
+            canvasContext.beginPath();
+            canvasContext.arc(this.x, this.y, this.circleRadius, 0, Math.PI * 2, true);
+            canvasContext.closePath();
+            canvasContext.clip();
+            canvasContext.drawImage(this.imageEl, this.x - this.width / 2, this.y - this.height / 2, this.width, this.height);
+            canvasContext.restore();
+        };
         CanvasImg.prototype.drawImage = function (canvasContext) {
             canvasContext.drawImage(this.imageEl, this.x, this.y, this.width, this.height);
         };
         CanvasImg.prototype.prepare = function () {
             var _this = this;
             return this.onLoad().then(function () { return _this; });
+        };
+        CanvasImg.prototype.onDrawImageError = function (resolve, reject, err) {
+            if (this.onImgError) {
+                this.onImgError(err);
+                resolve();
+            }
+            else {
+                reject(err);
+            }
         };
         CanvasImg.defaultProps = {
             x: 0,

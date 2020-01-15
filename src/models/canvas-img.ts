@@ -48,6 +48,8 @@ export default class CanvasImg implements ICanvas {
   public onDraw: ICanvasMember['onDraw'];
   public imageEl: HTMLImageElement;
   public rotateDeg: number;
+  public circleRadius: number;
+  public onImgError: Function;
 
   public constructor(props: ICanvasImgProps) {
     Object.assign(this, {...CanvasImg.defaultProps}, props);
@@ -64,7 +66,7 @@ export default class CanvasImg implements ICanvas {
         this.height = this.height || image.naturalHeight;
         resolve();
       };
-      img.onerror = reject;
+      img.onerror = this.onDrawImageError.bind(this, resolve, reject);
       img.src = this.src;
     });
   }
@@ -74,8 +76,10 @@ export default class CanvasImg implements ICanvas {
       this.onDraw(canvasContext, this);
     } else {
       if (this.rotateDeg) {
-        this.drawRotateImage(canvasContext)
-      } else {
+        this.drawRotateImage(canvasContext);
+      } else if (this.circleRadius) {
+         this.drawCircleImage(canvasContext);
+      }  else {
         this.drawImage(canvasContext);
       }
     }
@@ -89,11 +93,30 @@ export default class CanvasImg implements ICanvas {
     canvasContext.restore();
   }
 
+  private drawCircleImage(canvasContext: CanvasRenderingContext2D): void {
+    canvasContext.save();
+    canvasContext.beginPath();
+    canvasContext.arc(this.x, this.y, this.circleRadius, 0, Math.PI * 2, true);
+    canvasContext.closePath();
+    canvasContext.clip();
+    canvasContext.drawImage(this.imageEl, this.x - this.width / 2, this.y - this.height / 2, this.width, this.height);
+    canvasContext.restore();
+  }
+
   private drawImage(canvasContext: CanvasRenderingContext2D) {
     canvasContext.drawImage(this.imageEl, this.x, this.y, this.width, this.height);
   }
 
   public prepare(): Promise<ICanvas> {
     return this.onLoad().then(() => this);
+  }
+
+  private onDrawImageError(resolve: Function, reject: Function, err: any): void {
+    if (this.onImgError) {
+      this.onImgError(err);
+      resolve();
+    } else {
+      reject(err);
+    }
   }
 }
