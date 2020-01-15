@@ -465,7 +465,7 @@ export interface ICanvasTextProps extends ICanvasMember {
 ```
 
 #### ChangeLog
-## 0.1.1 (2020-01-15)
+## 0.1.2 (2020-01-15)
 * add: 加入圆形图片绘制
 * add: 加入绘制图片错误回调
 

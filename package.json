@@ -1,6 +1,6 @@
 {
   "name": "@xfe-team/canvas-image-painter",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "通过 canvas 合并图片, 文字, 二维码等, 并最终生成一张可分享的独立图片",
   "author": "sheailun, huangzhe",
   "license": "MIT",
