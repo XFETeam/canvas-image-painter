@@ -14,7 +14,7 @@
     "build": "rollup -c",
     "start": "rollup -c -w",
     "pack": "npm pack",
-    "release": "npm run build && git add dist/ && release-it 0.1.1",
+    "release": "npm run build && git add dist/ && release-it 0.1.2",
     "release-only": "release-it 0.1.1"
   },
   "git": "https://github.com/XFETeam/canvas-image-painter.git",
