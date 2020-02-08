@@ -73,7 +73,7 @@ class Example extends React.Component {
             size: 140,
             textBaseline: 'top', /* 默认top */
             padding: 30
-          }，
+          },
           {
             type: 'SplicingText', /* 拼接的文字字符串 */
             x: 100,
