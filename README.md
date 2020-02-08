@@ -46,7 +46,7 @@ class Example extends React.Component {
           },
           {
             type: 'img',
-            src: ‘http://thirdwx.qlogo.cn/mmopen/vi_32/fyKc7ddeDxEDkFmWEQlTcDlcIWfS8P20TDry8aX9axMfpznsISLPvxBcG1bUznRbcqPsOGhzLPzO3zHP5PcrVQ/132’,
+            src: 'http://thirdwx.qlogo.cn/mmopen/vi_32/fyKc7ddeDxEDkFmWEQlTcDlcIWfS8P20TDry8aX9axMfpznsISLPvxBcG1bUznRbcqPsOGhzLPzO3zHP5PcrVQ/132',
             x: 521,
             y: 319,
             width: 142,
