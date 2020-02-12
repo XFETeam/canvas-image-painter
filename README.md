@@ -477,7 +477,7 @@ export interface ICanvasTextProps extends ICanvasMember {
 * add: 加入文字基线 textBaseline
 * add: 加入文字拼接功能
 
-## License
+## Author
 
 She Ailun <br/>
 Huang Zhe
